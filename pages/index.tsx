@@ -55,7 +55,29 @@ const Home: NextPage = () => {
 
   const handleClick = async () => {
     if (!ticketPrice) return;
-  };
+
+    const {mutateAsync: BuyTickets} = useContractWrite(contract, "BuyTickets");
+
+    const notification = toast.loading("Buying your tickets...");
+  
+
+  try {
+    const data = await BuyTickets({
+      value: ethers.utils.parseEther(
+        (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
+      )
+    });
+    toast.success("Tickets purchased successfully!", {
+      id:notification, 
+    });
+    console.info("contract call success", data);
+  } catch (err) {
+    toast.error("Whoops something went wrong!", {
+      id: Notification,
+    });
+    console.error("Contract call failure", err);
+  }
+};
 
   if (isLoading) return <Loading />;
 
@@ -155,13 +177,10 @@ const Home: NextPage = () => {
                 >
                   Buy tickets
                 </button>
+               
                 <div>
-                  <Web3Button
-                    contractAddress="0x9109b4AdE0CAB5382261BC2Fb55e75f12B9211a1"
-                    action={(contract) => contract.BuyTickets(quantity)}
-                  >
-                    BuyTickets
-                  </Web3Button>
+                  
+              
 
                   <p>{lastWinner}</p>
                   <p>
