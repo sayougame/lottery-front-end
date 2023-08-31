@@ -19,6 +19,9 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { currency } from "constants";
 import CountdownTimer from "../components/CountdownTimer";
+import toast, { Toaster } from "react-hot-toast";
+import Web3 from "web3"; // Importera web3
+import { toWei } from "web3-utils"; // Importera toWei från web3-utils
 
 const Home: NextPage = () => {
   const [quantity, setQuantity] = useState<number>(1);
@@ -32,6 +35,9 @@ const Home: NextPage = () => {
   );
 
   const { data: ticketPrice } = useContractRead(contract, "ticketPrice");
+  const ticketPriceInEther = ticketPrice
+    ? ethers.utils.formatEther(ticketPrice)
+    : "0";
 
   const { data: currentWinningReward } = useContractRead(
     contract,
@@ -45,8 +51,6 @@ const Home: NextPage = () => {
 
   const { data: expiration } = useContractRead(contract, "expiration");
 
-  const { data: BuyTickets } = useContractWrite(contract, "BuyTickets");
-
   const { data: lastWinner } = useContractRead(contract, "lastWinner");
   const { data: lastWinnerAmount } = useContractRead(
     contract,
@@ -56,28 +60,30 @@ const Home: NextPage = () => {
   const handleClick = async () => {
     if (!ticketPrice) return;
 
-    const {mutateAsync: BuyTickets} = useContractWrite(contract, "BuyTickets");
+    const { mutateAsync: BuyTickets } = useContractWrite(
+      contract,
+      "BuyTickets"
+    );
 
     const notification = toast.loading("Buying your tickets...");
-  
 
-  try {
-    const data = await BuyTickets({
-      value: ethers.utils.parseEther(
-        (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
-      )
-    });
-    toast.success("Tickets purchased successfully!", {
-      id:notification, 
-    });
-    console.info("contract call success", data);
-  } catch (err) {
-    toast.error("Whoops something went wrong!", {
-      id: Notification,
-    });
-    console.error("Contract call failure", err);
-  }
-};
+    try {
+      const data = await BuyTickets({
+        value: ethers.utils.parseEther(
+          (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
+        ),
+      });
+      toast.success("Tickets purchased successfully!", {
+        id: notification,
+      });
+      console.info("contract call success", data);
+    } catch (err) {
+      toast.error("Whoops something went wrong!", {
+        id: "Notification",
+      });
+      console.error("Contract call failure", err);
+    }
+  };
 
   if (isLoading) return <Loading />;
 
@@ -166,6 +172,31 @@ const Home: NextPage = () => {
                     <p>+ Network Fees</p>
                     <p>TBC</p>
                   </div>
+                  <Web3Button
+                    contractAddress="0x9109b4AdE0CAB5382261BC2Fb55e75f12B9211a1"
+                    action={(contract) => {
+                      contract.call("BuyTickets", [], {
+                        value: ethers.utils.parseEther(
+                          (Number(ticketPriceInEther) * quantity).toString()
+                        ),
+                      });
+                    }}
+                    style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "10px 20px",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                    }}
+                    disabled={
+                      expiration?.toString() < Date.now().toString() ||
+                      remainingTickets?.toNumber() === 0
+                    }
+                  >
+                    BuyTickets
+                  </Web3Button>
                 </div>
 
                 <button
@@ -177,11 +208,8 @@ const Home: NextPage = () => {
                 >
                   Buy tickets
                 </button>
-               
-                <div>
-                  
-              
 
+                <div>
                   <p>{lastWinner}</p>
                   <p>
                     {lastWinnerAmount &&

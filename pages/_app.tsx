@@ -1,8 +1,13 @@
 import type { AppProps } from "next/app";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
-import "styles/globals.css"
-import {Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import "../styles/globals.css";
+
 import "tailwindcss/tailwind.css";
+
+<div>
+  <Toaster />
+</div>;
 
 // This is the chain your dApp will work on.
 // Change this to the chain your app is built for.
