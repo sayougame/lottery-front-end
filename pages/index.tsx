@@ -15,13 +15,12 @@ import Header from "../components/Header";
 import "tailwindcss/tailwind.css";
 import Login from "../components/Login";
 import Loading from "../components/Loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { currency } from "../constants";
 import CountdownTimer from "../components/CountdownTimer";
 import toast, { Toaster } from "react-hot-toast";
 import Marquee from "react-fast-marquee";
-
 const Home: NextPage = () => {
   const [quantity, setQuantity] = useState<number>(1);
   const address = useAddress();
@@ -55,6 +54,20 @@ const Home: NextPage = () => {
     contract,
     "lastWinnerAmount"
   );
+  const [userTickets, setUserTickets] = useState(0);
+  const { data: tickets } = useContractRead(contract, "getTickets");
+
+  useEffect(() => {
+    if (!tickets) return;
+
+    const totalTickets: string[] = tickets;
+
+    const noOfUserTickets = totalTickets.reduce(
+      (total, ticketAddress) => (ticketAddress === address ? total + 1 : total),
+      0
+    );
+    setUserTickets(noOfUserTickets);
+  }, [tickets, address]);
 
   if (isLoading) return <Loading />;
 
@@ -173,6 +186,7 @@ const Home: NextPage = () => {
                       cursor: "pointer",
                       fontSize: "16px",
                       marginTop: "1.25rem",
+                      marginBottom: "0.25rem",
                       width: "100%",
                       backgroundColor: "#013F34",
                     }}
@@ -184,10 +198,32 @@ const Home: NextPage = () => {
                     {currency}
                   </Web3Button>
                 </div>
+                {userTickets > 0 && (
+                  <div className="stats">
+                    <p className="text-lg mb-2">
+                      You have {userTickets} tickets in this draw
+                    </p>
+                    <div className="flex max-w-sm flex-wrap gap-x-2 gap-y-2">
+                      {Array(userTickets)
+                        .fill("")
+                        .map((_, index) => (
+                          <p
+                            key={index}
+                            className="text-emerald-300 h-20 w-12 bg-emerald-500/30 rounded-lg flex flex-shrink-0 items-center justify-center text-xs italic"
+                          >
+                            {index + 1}
+                          </p>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
+        <p className="text-white items-center justify-center flex">
+          DISCORD TWITTER BLABLA
+        </p>
       </div>
     </main>
   );
