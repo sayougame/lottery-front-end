@@ -2,7 +2,6 @@ import type { AppProps } from "next/app";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import toast, { Toaster } from "react-hot-toast";
 import "../styles/globals.css";
-
 import "tailwindcss/tailwind.css";
 
 <div>

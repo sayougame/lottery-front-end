@@ -20,8 +20,7 @@ import { ethers } from "ethers";
 import { currency } from "constants";
 import CountdownTimer from "../components/CountdownTimer";
 import toast, { Toaster } from "react-hot-toast";
-import Web3 from "web3"; // Importera web3
-import { toWei } from "web3-utils"; // Importera toWei från web3-utils
+import Marquee from "react-fast-marquee";
 
 const Home: NextPage = () => {
   const [quantity, setQuantity] = useState<number>(1);
@@ -97,7 +96,21 @@ const Home: NextPage = () => {
       <div>
         <Header />
       </div>
-      // Next draw
+      <div className="flex text-center justify-center">
+        <div className=" text-white text-xl m-10">
+          <p className="text-emerald-300 text-xl italic font-bold animate-pulse">
+            Last Winner
+          </p>
+          <Marquee>
+            <p>
+              {lastWinner} - WON -{" "}
+              {lastWinnerAmount &&
+                ethers.utils.formatEther(lastWinnerAmount?.toString())}{" "}
+              {currency}
+            </p>
+          </Marquee>
+        </div>
+      </div>
       <div className="">
         <div className="space-y-5 md:space-y-0 md:flex md:flex-row items-start justify-center md:space-x-5">
           <div className="stats-container">
@@ -183,41 +196,23 @@ const Home: NextPage = () => {
                     }}
                     style={{
                       backgroundColor: "#007bff",
-                      color: "white",
-                      padding: "10px 20px",
-                      border: "none",
-                      borderRadius: "4px",
+                      color: "#ffffff",
+                      padding: "1.25rem 2.5rem",
+                      borderradius: "0.375rem",
+                      borderRadius: "0.375rem",
                       cursor: "pointer",
                       fontSize: "16px",
+                      marginTop: "1.25rem",
+                      width: "100%",
+                      backgroundColor: "#013F34",
                     }}
-                    disabled={
-                      expiration?.toString() < Date.now().toString() ||
-                      remainingTickets?.toNumber() === 0
-                    }
                   >
-                    BuyTickets
-                  </Web3Button>
-                </div>
-
-                <button
-                  disabled={
-                    expiration?.toString() < Date.now().toString() ||
-                    remainingTickets?.toNumber() == 0
-                  }
-                  className="mt-5 w-full bg-gradient-to-br from-orange-500 to-emerald-600 px-10 py-5 rounded-md text-white shadow-xl disabled:from-gray-600 disabled:to-gray-400 disabled:cursor-not-allowed disabled:text-gray-100"
-                >
-                  Buy tickets
-                </button>
-
-                <div>
-                  <p>{lastWinner}</p>
-                  <p>
-                    {lastWinnerAmount &&
-                      ethers.utils.formatEther(
-                        lastWinnerAmount?.toString()
-                      )}{" "}
+                    Buy {quantity} tickets for{" "}
+                    {ticketPrice &&
+                      Number(ethers.utils.formatEther(ticketPrice.toString())) *
+                        quantity}{" "}
                     {currency}
-                  </p>
+                  </Web3Button>
                 </div>
               </div>
             </div>

@@ -28,14 +28,10 @@ function Header() {
             User: {address?.substring(0, 5)}...
             {address?.substring(address.length, address.length - 5)}
           </p>
-        </div>
-      </div>
-      <div className="hidden md:flex md:col-span-3 items-center justify-center rounded-md">
-        <div className="bg-black p-4 space-x-2">
-          <NavButton onClick={disconnect} title="Buy Tickets" />
           <NavButton onClick={disconnect} title="Logout" />
         </div>
       </div>
+      <div className="hidden md:flex md:col-span-3 rounded-md"></div>
       <div className="flex flex-col ml-auto text-right">
         <Bars3BottomRightIcon className="h-8 w-8 mx-auto text-white cursor-pointer" />
         <span className="md:hidden">
