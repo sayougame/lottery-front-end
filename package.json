@@ -20,7 +20,10 @@
     "react-countdown": "^2.3.5",
     "react-dom": "^18.2",
     "react-fast-marquee": "^1.6.0",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "react-spinner": "^0.2.7",
+    "react-spinners": "^0.13.8",
+    "thirdweb": "^0.12.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.11",
