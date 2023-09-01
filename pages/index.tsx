@@ -17,7 +17,7 @@ import Login from "../components/Login";
 import Loading from "../components/Loading";
 import { useState } from "react";
 import { ethers } from "ethers";
-import { currency } from "constants";
+import { currency } from "../constants";
 import CountdownTimer from "../components/CountdownTimer";
 import toast, { Toaster } from "react-hot-toast";
 import Marquee from "react-fast-marquee";
@@ -55,34 +55,6 @@ const Home: NextPage = () => {
     contract,
     "lastWinnerAmount"
   );
-
-  const handleClick = async () => {
-    if (!ticketPrice) return;
-
-    const { mutateAsync: BuyTickets } = useContractWrite(
-      contract,
-      "BuyTickets"
-    );
-
-    const notification = toast.loading("Buying your tickets...");
-
-    try {
-      const data = await BuyTickets({
-        value: ethers.utils.parseEther(
-          (Number(ethers.utils.formatEther(ticketPrice)) * quantity).toString()
-        ),
-      });
-      toast.success("Tickets purchased successfully!", {
-        id: notification,
-      });
-      console.info("contract call success", data);
-    } catch (err) {
-      toast.error("Whoops something went wrong!", {
-        id: "Notification",
-      });
-      console.error("Contract call failure", err);
-    }
-  };
 
   if (isLoading) return <Loading />;
 
@@ -195,10 +167,8 @@ const Home: NextPage = () => {
                       });
                     }}
                     style={{
-                      backgroundColor: "#007bff",
                       color: "#ffffff",
                       padding: "1.25rem 2.5rem",
-                      borderradius: "0.375rem",
                       borderRadius: "0.375rem",
                       cursor: "pointer",
                       fontSize: "16px",
@@ -219,7 +189,6 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-      // PRice per Tickets
     </main>
   );
 };
